@@ -21,6 +21,7 @@ type joinOptions struct {
 	advertiseAddr string
 	dataPathAddr  string
 	token         string
+	zone          string
 	availability  string
 }
 
@@ -44,6 +45,7 @@ func newJoinCommand(dockerCli command.Cli) *cobra.Command {
 	flags.StringVar(&opts.advertiseAddr, flagAdvertiseAddr, "", "Advertised address (format: <ip|interface>[:port])")
 	flags.StringVar(&opts.dataPathAddr, flagDataPathAddr, "", "Address or interface to use for data path traffic (format: <ip|interface>)")
 	flags.StringVar(&opts.token, flagToken, "", "Token for entry into the swarm")
+	flags.StringVar(&opts.zone, flagZone, "default", "Zone where the node is deployed")
 	flags.StringVar(&opts.availability, flagAvailability, "active", `Availability of the node ("active"|"pause"|"drain")`)
 	return cmd
 }
@@ -57,6 +59,7 @@ func runJoin(dockerCli command.Cli, flags *pflag.FlagSet, opts joinOptions) erro
 		ListenAddr:    opts.listenAddr.String(),
 		AdvertiseAddr: opts.advertiseAddr,
 		DataPathAddr:  opts.dataPathAddr,
+		Zone:          opts.zone,
 		RemoteAddrs:   []string{opts.remote},
 	}
 	if flags.Changed(flagAvailability) {

@@ -20,6 +20,7 @@ type initOptions struct {
 	// Not a NodeAddrOption because it has no default port.
 	advertiseAddr   string
 	dataPathAddr    string
+	zone            string
 	forceNewCluster bool
 	availability    string
 }
@@ -43,6 +44,7 @@ func newInitCommand(dockerCli command.Cli) *cobra.Command {
 	flags.StringVar(&opts.advertiseAddr, flagAdvertiseAddr, "", "Advertised address (format: <ip|interface>[:port])")
 	flags.StringVar(&opts.dataPathAddr, flagDataPathAddr, "", "Address or interface to use for data path traffic (format: <ip|interface>)")
 	flags.BoolVar(&opts.forceNewCluster, "force-new-cluster", false, "Force create a new cluster from current state")
+	flags.StringVar(&opts.zone, flagZone, "default", "Zone where the node is deployed")
 	flags.BoolVar(&opts.autolock, flagAutolock, false, "Enable manager autolocking (requiring an unlock key to start a stopped manager)")
 	flags.StringVar(&opts.availability, flagAvailability, "active", `Availability of the node ("active"|"pause"|"drain")`)
 	addSwarmFlags(flags, &opts.swarmOptions)
@@ -59,6 +61,7 @@ func runInit(dockerCli command.Cli, flags *pflag.FlagSet, opts initOptions) erro
 		DataPathAddr:     opts.dataPathAddr,
 		ForceNewCluster:  opts.forceNewCluster,
 		Spec:             opts.swarmOptions.ToSpec(flags),
+		Zone:             opts.zone,
 		AutoLockManagers: opts.swarmOptions.autolock,
 	}
 	if flags.Changed(flagAvailability) {
